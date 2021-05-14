@@ -1,25 +1,27 @@
 import torch
 from optimizer import SGD
+from plotter import *
+import math
 
-# Riccardo C: This function can be improved a lot:
-# - Batch Gradient Descent could be integreted
-# - Error rate should be evaluted during the traing either on the training set but also on a validation set
-# - Loss/Error rate evolution should be be plotted (feel free to copy paste the function that I wrote for MiniProject1)
-# - save the best model (when the validation loss is minimum)
-
-def train(model, loss_function, train_input, train_target, nb_epochs, lr, plot=False):
+def train(model, loss_function, train_input, train_target, nb_epochs, lr, show_plot=False):
     """
-    Training
+    Trains the model using the data provided as training set
     """
 
     optimizer = SGD(model.param(), lr)
 
     losses = []
+    val_losses = []
+    n = train_input.size(0)
+    # create validation set
+    val_dim = math.floor(n*0.1)
+    val_input = train_input[:val_dim]
+    train_input = train_input[val_dim:]
+    val_target = train_target[:val_dim]
+    train_target = train_target[val_dim:]
     for epoch in range(1,nb_epochs+1):
-
         epoch_loss = 0
-        n = train_input.size(0)
-        for i in range(n):
+        for i in range(n-val_dim):
             # forward step
             output = model(train_input[i].view(1,-1)) 
             # compute the loss
@@ -30,17 +32,31 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, plot=F
             # backward
             loss.backward() 
             # sgd step
-            optimizer.step() 
+            optimizer.step()
         if epoch % 10 == 0:
             print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/n))
             losses.append(epoch_loss/n)
+            #evaluate loss on the validation set
+            epoch_val_loss = 0
+            for i in range(val_dim):
+                output = model(val_input[i].view(1,-1))
+                loss = loss_function(output, val_target[i])
+                epoch_val_loss += loss.loss.item()
+            val_losses.append(epoch_val_loss/val_dim)
 
-    #if plot:
-        #plot the evolution of the loss
+    if show_plot:
+        if loss_function.function == 'MSE':
+            metric = 'MSE Loss'
+        elif loss_function.function == 'CrossEntropy':
+            metric = 'Cross-Entropy Loss'
+        elif loss_function.function == 'MAE':
+            metric = 'MAE Loss'
+        plot_train_val(losses, val_losses, 10, al_param=False, metric=metric, save=True, model_name='')
+
 
 def test(model, test_input, test_label):
     '''
-    Test the model computing the error rate 
+    Test the model computing the error rate (in %)
     '''
     test_pred_label = model(test_input)
     _, test_class  = torch.max(test_label, 1)

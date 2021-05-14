@@ -21,7 +21,7 @@ def drelu(x):
     """
     return (x > 0).float()
 
-# Riccardo C: not sure if this implementation is efficient from a computational point of view
+
 def tanh(x):
     """
     TanH(x) = (e^x - e^-x) / (e^x + e^-x)
@@ -34,7 +34,7 @@ def dtanh(tanh_x):
     """
     return 1 - tanh_x**2
 
-# Riccardo C: not sure if this implementation is efficient from a computational point of view
+
 def sigmoid(x):
     """
     Sigmoid(x) = 1 / (1+e^-x)
@@ -55,6 +55,32 @@ def mse(f_x, y):
 
 def dmse(f_x, y):
     """
-    dMSE(f_x,y) = 2* (f_x-y) 
+    dMSE(f_x,y) = sum(2* (f_x-y))
     """ 
-    return 2 * (f_x - y)
+    return torch.sum(2 * (f_x - y))
+
+def cross_entropy(p, t):
+    """
+    Cross_entropy(p, t) = sum_n(- sum_k(t*log(p)))
+    """
+    l = - torch.sum(torch.mul(t, torch.log(p)), 1)
+    return l.sum()
+
+def dcross_entropy(p, t):
+    """
+    dCross_entropy(p,t) = sum_n(-sum_k(t/p))
+    """
+    l = - torch.sum(torch.mul(t, torch.pow(p,-1)), 1)
+    return l.sum()
+
+def mae(x, y):
+    """
+    MAE(x,y) = sum(abs(x-y))
+    """
+    return torch.abs(x-y).sum()
+
+def dmae(x, y):
+    """
+    dMAE(x,y) = sum(sign(x))
+    """
+    return torch.sign(x).sum()

@@ -4,7 +4,7 @@ class Optimizer(object):
             
 class SGD(Optimizer):
     '''
-    Stochastic gradient descent
+    Stochastic Gradient Descent
     '''
     def __init__(self, params, lr):
         super(SGD).__init__()
@@ -19,6 +19,3 @@ class SGD(Optimizer):
         """
         for (weight, grad) in self.params:
             weight.sub_(self.lr * grad)
-
-
-# Riccardo C: other first order optimizer could be consider (maybe something with a bit of inertia)

@@ -1,4 +1,5 @@
 import torch
+import math
 import function
 
 
@@ -67,19 +68,26 @@ class Linear(Module):
         else:
             return [(self.weight, self.dweight), (self.bias, self.dbias)]
 
-    # Riccardo C: different weights initialization could be implemented (i.e. Xavier)
+
     def init_parameters(self, init_option):
         """
         Weights and biases initialization
         """
         if init_option=='none':
             pass
-        elif init_option=='normal':
-            # Riccardo C: feel free to change these values (are completely random)
+        elif init_option=='standard':
+            #Standard normal initialization
             self.weight = self.weight.normal_(0, 1)
-            # Riccardo C: I don't know why but starting with bias normal distributd the train 
-            # doesn't connverge at all if you have any explanation, let me know!!!
-            # self.bias = self.bias.normal_(0, 1)
+        elif init_option=='normal':
+            #ResNet Xavier initialization
+            n = self.output_dim
+            self.weight = self.weight.normal_(0, math.sqrt(2. / n))
+        elif init_option=='xavier':
+            #Original Xavier initialization
+            n_in = self.input_dim
+            n_out = self.output_dim
+            std = math.sqrt(2. / (n_in + n_out))
+            self.weight = self.weight.normal_(0, std)
         else:
             raise TypeError('Weights inizialiazation not known')
 
@@ -144,14 +152,11 @@ class Sigmoid(Module):
         """
         return gradwrtoutput * function.dsigmoid(self.output)
 
-# Riccardo C: other modules could be implemented, i.e. Batch Normalization
-# class BatchNorm(Module)
-
 
 class Sequential(Module):
-    # Riccardo C: this description could be improved
     """
-    General Class to create a Multi Layer Perceptron 
+    General Class to create a Neural Network given a sequence
+    of consecutive layers
     """ 
     def __init__(self, *args):
         super(Sequential).__init__()
@@ -165,7 +170,7 @@ class Sequential(Module):
             
     def forward(self, input):
         """
-        Forwrard step of the network
+        Forward step of the network
         """
         self.input = input
         output = input
@@ -203,40 +208,46 @@ class Sequential(Module):
                 gradient.zero_()
 
 
-# Riccardo C: maybe we can create a new loss.py file where we can create a new class Loss (defined on Module)
-# and add there all the losses. I have already implemented MSE. We could consider also CrossEntropyLoss and/or MAE
-# In alternative, other Loss Function could be added directly in this module using if/else statement
-
-class MSE(Module):
+class Loss(Module):
     """
-    Mean Squared Error (L2 Norm)
+    General class to define on the following loss
+    functions:
+    - 'MSE': Mean Squared Error (L2 Norm)
+    - 'CrossEntropy': Cross-Entropy
+    - 'MAE': Mean Absolute Error
     """
-    def __init__(self, model):
-        super(MSE).__init__()
+    def __init__(self, model, fun='MSE'):
+        super(Loss).__init__()
         self.model = model
-    
+        self.function = fun
+
     def __call__(self, output, target):
         self.forward(output, target)
         return self
 
     def forward(self, output, target):
         """
-        Forward step: sum( (f(x)-y)^2 )
+        Forward step, depending on the chosen loss functioin
         """
         self.output = output
         self.target = target
-        self.loss = function.mse(self.output, self.target)
+        if self.function=='MSE':
+            self.loss = function.mse(self.output, self.target)
+        elif self.function=='CrossEntropy':
+            self.loss = function.cross_entropy(self.output, self.target)
+        elif self.function=='MAE':
+            self.loss = function.mae(self.output, self.target)
         return self.loss
 
     def backward(self):
         """
-        Backward step: compute the mean-squared error derivative with respect to the output
+        Backward step: compute the loss function derivative with respect to the output
         """
-        dloss = function.dmse(self.output, self.target)
+        if self.function=='MSE':
+            dloss = function.dmse(self.output, self.target)
+        elif self.function=='CrossEntropy':
+            dloss = function.dcross_entropy(self.output, self.target)
+        elif self.function=='MAE':
+            dloss = function.dmae(self.output, self.target)
+        
         self.model.backward(dloss)
-
-# Riccardo C: could be implemented
-# class CrossEntropyLoss(Module)
-
-# Riccardo C: could be implemented
-# class MAE(Module)
