@@ -21,7 +21,7 @@ class Linear(Module):
     """
     Fully Connected Layer
     """
-    def __init__(self, input_dim, output_dim, bias=True, init_option='normal'):
+    def __init__(self, input_dim, output_dim, bias=True, init_option='standard'):
         super(Linear).__init__()
         
         self.input_dim = input_dim
@@ -210,7 +210,7 @@ class Sequential(Module):
 
 class Loss(Module):
     """
-    General class to define on the following loss
+    General class to define the following loss
     functions:
     - 'MSE': Mean Squared Error (L2 Norm)
     - 'CrossEntropy': Cross-Entropy
@@ -227,7 +227,7 @@ class Loss(Module):
 
     def forward(self, output, target):
         """
-        Forward step, depending on the chosen loss functioin
+        Forward step, depending on the chosen loss function
         """
         self.output = output
         self.target = target

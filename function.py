@@ -55,23 +55,33 @@ def mse(f_x, y):
 
 def dmse(f_x, y):
     """
-    dMSE(f_x,y) = sum(2* (f_x-y))
+    dMSE(f_x,y) = 2* (f_x-y)
     """ 
-    return torch.sum(2 * (f_x - y))
+    return 2 * (f_x - y)
+
+def softmax(x):
+    """
+    Compute softmax values for each sets of scores in x.
+    """
+    return torch.exp(x) / torch.sum(torch.exp(x))
 
 def cross_entropy(p, t):
     """
-    Cross_entropy(p, t) = sum_n(- sum_k(t*log(p)))
+    Cross_entropy(p, t) = - sum(t*log(p))
     """
-    l = - torch.sum(torch.mul(t, torch.log(p)), 1)
-    return l.sum()
+    #print('p', p)
+    p = softmax(p)
+    #print('ps',p)
+    l = - torch.mul(t, torch.log(p)).sum(dim=1)
+    #print('l', l)
+    return l
 
 def dcross_entropy(p, t):
     """
-    dCross_entropy(p,t) = sum_n(-sum_k(t/p))
+    dCross_entropy(p,t) = - t/p
     """
-    l = - torch.sum(torch.mul(t, torch.pow(p,-1)), 1)
-    return l.sum()
+    p = softmax(p)
+    return p-t
 
 def mae(x, y):
     """
@@ -81,6 +91,6 @@ def mae(x, y):
 
 def dmae(x, y):
     """
-    dMAE(x,y) = sum(sign(x))
+    dMAE(x,y) = sign(x-y)
     """
-    return torch.sign(x).sum()
+    return torch.sign(x-y)

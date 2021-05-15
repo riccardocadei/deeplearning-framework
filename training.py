@@ -1,38 +1,65 @@
 import torch
-from optimizer import SGD
+from optimizer import *
 from plotter import *
 import math
 
-def train(model, loss_function, train_input, train_target, nb_epochs, lr, show_plot=False):
+def train(model, loss_function, train_input, train_target, nb_epochs, lr, optim='SGD', batch_size=1, show_plot=False):
     """
     Trains the model using the data provided as training set
     """
-
-    optimizer = SGD(model.param(), lr)
-
+    n = train_input.size(0)
+    
+    if optim == 'SGD':
+        #Stochastic Gradient Descent
+        optimizer = SGD(model.param(), lr)
+    elif optim == 'BGD':
+        #Batch Gradient Descent
+        optimizer = BGD(model.param(), lr, batch_size)
+    elif optim == 'GD':
+        #Gradient Descent
+        batch_size = n
+        optimizer = BGD(model.param(), lr, batch_size)
+    
     losses = []
     val_losses = []
-    n = train_input.size(0)
+    
     # create validation set
     val_dim = math.floor(n*0.1)
     val_input = train_input[:val_dim]
     train_input = train_input[val_dim:]
     val_target = train_target[:val_dim]
     train_target = train_target[val_dim:]
+    
     for epoch in range(1,nb_epochs+1):
         epoch_loss = 0
-        for i in range(n-val_dim):
-            # forward step
-            output = model(train_input[i].view(1,-1)) 
-            # compute the loss
-            loss = loss_function(output, train_target[i]) 
-            epoch_loss += loss.loss.item()
-            # reset the grad
-            model.zero_grad() 
-            # backward
-            loss.backward() 
-            # sgd step
-            optimizer.step()
+        if optim == 'SGD':
+            for i in range(n-val_dim):
+                # forward step
+                output = model(train_input[i].view(1,-1)) 
+                # compute the loss
+                loss = loss_function(output, train_target[i]) 
+                epoch_loss += loss.loss.item()
+                # reset the grad
+                model.zero_grad() 
+                # backward
+                loss.backward() 
+                # sgd step
+                optimizer.step()
+        else:
+            for input, target in zip(train_input.split(batch_size), train_target.split(batch_size)):
+                # reset the grad
+                model.zero_grad() 
+                for i in range(batch_size):
+                    # forward step
+                    output = model(input[i].view(1,-1)) 
+                    # compute the loss
+                    loss = loss_function(output, target[i]) 
+                    epoch_loss += loss.loss.item()  
+                    # backward
+                    loss.backward() 
+                # bgd step
+                optimizer.step()
+        
         if epoch % 10 == 0:
             print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/n))
             losses.append(epoch_loss/n)
