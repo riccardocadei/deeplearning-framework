@@ -51,7 +51,7 @@ def mse(f_x, y):
     """
     MSE(f_x,y) = sum( (f_x-y)^2 )
     """
-    return (f_x - y).pow(2).sum()
+    return (f_x - y).pow(2).sum() 
 
 def dmse(f_x, y):
     """

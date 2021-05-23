@@ -3,22 +3,15 @@ from optimizer import *
 from plotter import *
 import math
 
-def train(model, loss_function, train_input, train_target, nb_epochs, lr, optim='SGD', batch_size=1, show_plot=False):
+def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False):
     """
     Trains the model using the data provided as training set
     """
     n = train_input.size(0)
     
-    if optim == 'SGD':
-        #Stochastic Gradient Descent
-        optimizer = SGD(model.param(), lr)
-    elif optim == 'BGD':
-        #Batch Gradient Descent
-        optimizer = BGD(model.param(), lr, batch_size)
-    elif optim == 'GD':
-        #Gradient Descent
-        batch_size = n
-        optimizer = BGD(model.param(), lr, batch_size)
+    #Batch Gradient Descent
+    optimizer = SGD(model.param(), lr, batch_size)
+
     
     losses = []
     val_losses = []
@@ -32,33 +25,20 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, optim=
     
     for epoch in range(1,nb_epochs+1):
         epoch_loss = 0
-        if optim == 'SGD':
-            for i in range(n-val_dim):
+
+        for input, target in zip(train_input.split(batch_size), train_target.split(batch_size)):
+            # reset the grad
+            model.zero_grad() 
+            for i in range(batch_size):
                 # forward step
-                output = model(train_input[i].view(1,-1)) 
+                output = model(input[i].view(1,-1)) 
                 # compute the loss
-                loss = loss_function(output, train_target[i]) 
-                epoch_loss += loss.loss.item()
-                # reset the grad
-                model.zero_grad() 
+                loss = loss_function(output, target[i]) 
+                epoch_loss += loss.loss.item()  
                 # backward
                 loss.backward() 
-                # sgd step
-                optimizer.step()
-        else:
-            for input, target in zip(train_input.split(batch_size), train_target.split(batch_size)):
-                # reset the grad
-                model.zero_grad() 
-                for i in range(batch_size):
-                    # forward step
-                    output = model(input[i].view(1,-1)) 
-                    # compute the loss
-                    loss = loss_function(output, target[i]) 
-                    epoch_loss += loss.loss.item()  
-                    # backward
-                    loss.backward() 
-                # bgd step
-                optimizer.step()
+            # bgd step
+            optimizer.step()
         
         if epoch % 10 == 0:
             print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/n))

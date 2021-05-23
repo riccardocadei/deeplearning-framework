@@ -21,7 +21,7 @@ class Linear(Module):
     """
     Fully Connected Layer
     """
-    def __init__(self, input_dim, output_dim, bias=True, init_option='standard'):
+    def __init__(self, input_dim, output_dim, bias=True, init_option='normal'):
         super(Linear).__init__()
         
         self.input_dim = input_dim
