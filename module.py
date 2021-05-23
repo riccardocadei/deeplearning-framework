@@ -54,7 +54,7 @@ class Linear(Module):
         # [[dL/dW]] = [dL/ds] * x.t
         self.dweight.add_(self.input.t().mm(gradwrtoutput))
         # [dL/db] = [dL/ds]
-        if self.dbias is not None: self.dbias.add_(gradwrtoutput)
+        if self.dbias is not None: self.dbias.add_(gradwrtoutput.sum(dim=0))
         # [dL/dx] = W.t * [dL/ds]
         return gradwrtoutput.mm(self.weight.t())
 

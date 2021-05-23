@@ -10,11 +10,12 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
     n = train_input.size(0)
     
     #Batch Gradient Descent
-    optimizer = SGD(model.param(), lr, batch_size)
+    optimizer = SGD(model.param(), lr)
 
     
     losses = []
     val_losses = []
+    num_batches = n // batch_size
     
     # create validation set
     val_dim = math.floor(n*0.1)
@@ -29,20 +30,20 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
         for input, target in zip(train_input.split(batch_size), train_target.split(batch_size)):
             # reset the grad
             model.zero_grad() 
-            for i in range(batch_size):
+            #for i in range(batch_size):
                 # forward step
-                output = model(input[i].view(1,-1)) 
+            output = model(input) 
                 # compute the loss
-                loss = loss_function(output, target[i]) 
-                epoch_loss += loss.loss.item()  
-                # backward
-                loss.backward() 
+            loss = loss_function(output, target) 
+            epoch_loss += loss.loss.item()  
+            # backward
+            loss.backward() 
             # bgd step
             optimizer.step()
         
         if epoch % 10 == 0:
-            print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/n))
-            losses.append(epoch_loss/n)
+            print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/num_batches))
+            losses.append(epoch_loss/num_batches)
             #evaluate loss on the validation set
             epoch_val_loss = 0
             for i in range(val_dim):
