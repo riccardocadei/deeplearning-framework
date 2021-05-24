@@ -42,7 +42,6 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
             optimizer.step()
         
         if epoch % 10 == 0:
-            print('Epoch {}/{}, Loss: {}'.format(epoch, nb_epochs, epoch_loss/num_batches))
             losses.append(epoch_loss/num_batches)
             #evaluate loss on the validation set
             epoch_val_loss = 0
@@ -51,6 +50,9 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
                 loss = loss_function(output, val_target[i])
                 epoch_val_loss += loss.loss.item()
             val_losses.append(epoch_val_loss/val_dim)
+            print('Epoch {}/{}, Train_Loss: {:.4f}, Val_Loss: {:.4f}'.format(epoch, nb_epochs, epoch_loss/num_batches, 
+                                                                        epoch_val_loss/val_dim))
+
 
     if show_plot:
         if loss_function.function == 'MSE':
