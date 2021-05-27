@@ -16,7 +16,7 @@ def run_experiment(loss_func:str, batch_size, num_experiments, nb_epochs=300):
     for i in range(num_experiments):
         print("experiment: {}/{}".format(i+1, num_experiments))
         # Load the dataset
-        train_input, train_label = generate_dataset_disk()
+        train_input, train_label = generate_dataset_disk(plot=False)
         test_input, test_label = generate_dataset_disk(plot=False)
 
         model = Sequential(Linear(2, 25), ReLU(),
@@ -47,9 +47,9 @@ def run_experiment(loss_func:str, batch_size, num_experiments, nb_epochs=300):
 
 
 def main():
-    num_experiments = 10
+    num_experiments = 1
     losses = ["MSE", "MAE", "CrossEntropy"]
-    batch_sizes = [1, 25, 50, 900]
+    batch_sizes = [50]
     
     exp_data = {"loss": [],
                 "batch_size" : [],
@@ -59,16 +59,14 @@ def main():
                 "test_error_mean": [],
                 "test_error_std" : []
                 }
+    nb_epochs = 300
 
     for loss in losses:
         for batch_size in batch_sizes:
             print("\n")
             print("#"*60)
             print("loss used:", loss, " batch size:", batch_size)
-            if batch_size == 900:
-                nb_epochs = 600 # with higher batch size we would have less updates
-            else:
-                nb_epochs = 300
+
             (train_error_mean, test_error_mean,
                 train_error_std, test_error_std) = run_experiment(loss, batch_size, num_experiments, nb_epochs)
 
@@ -80,8 +78,8 @@ def main():
             exp_data["train_error_std"].append(train_error_std.numpy())
             exp_data["test_error_std"].append(test_error_std.numpy())
     
-    df = pd.DataFrame(exp_data)
-    df.to_csv("experiments.csv")
+    #df = pd.DataFrame(exp_data)
+    #df.to_csv("experiments.csv")
 
 
 if __name__ == '__main__':
