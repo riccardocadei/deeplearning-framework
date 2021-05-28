@@ -87,7 +87,7 @@ def mae(x, y):
     """
     MAE(x,y) = sum(abs(x-y))
     """
-    return torch.abs(x-y).sum().mean(dim=0)
+    return torch.abs(x-y).sum(dim=1).mean(dim=0)
 
 def dmae(x, y):
     """

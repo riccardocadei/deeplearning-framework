@@ -2,9 +2,9 @@ import torch
 import matplotlib.pyplot as plt
 
 def plot_train_val(m_train, m_val, period, 
-                    al_param=False, metric='Cross-Entropy Loss', save=False, model_name=''):
+                    al_param=False, metric='Cross-Entropy Loss'):
     """
-    Plot the evolution of the metric evaluated on the training and validation set during the trainining
+    Plot the evolution of the metric evaluated on the training and validation set during the training
     
     Args:
         m_train: history of the metric evaluated on the train 
@@ -31,6 +31,6 @@ def plot_train_val(m_train, m_val, period,
     plt.xlabel('Number of Epochs')
     plt.ylabel(metric)
     plt.legend(loc = 'upper right')
-    #if save==True:
-    #    plt.savefig('plots/'+model_name+' '+metric)
-    #plt.show()
+    
+    plt.savefig('plots/'+metric)
+    plt.show()

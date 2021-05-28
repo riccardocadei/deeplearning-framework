@@ -1,7 +1,9 @@
 import torch
+import math
+
 from optimizer import *
 from plotter import *
-import math
+
 
 def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False):
     """
@@ -9,8 +11,8 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
     """
     n = train_input.size(0)
     
-    #Batch Gradient Descent
-    optimizer = SGD(model.param(), lr)
+    # Batch Gradient Descent
+    optimizer = BGD(model.param(), lr)
 
     
     losses = []
@@ -30,15 +32,13 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
         for input, target in zip(train_input.split(batch_size), train_target.split(batch_size)):
             # reset the grad
             model.zero_grad() 
-            #for i in range(batch_size):
-                # forward step
+            # forward step
             output = model(input) 
-                # compute the loss
             loss = loss_function(output, target) 
             epoch_loss += loss.loss.item()  
             # backward
             loss.backward() 
-            # bgd step
+            # (batch) gradient descent step
             optimizer.step()
         
         if epoch % 10 == 0:
@@ -61,7 +61,7 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
             metric = 'Cross-Entropy Loss'
         elif loss_function.function == 'MAE':
             metric = 'MAE Loss'
-        plot_train_val(losses, val_losses, 10, al_param=False, metric=metric, save=True, model_name='')
+        plot_train_val(losses, val_losses, 10, al_param=False, metric=metric)
 
 
 def test(model, test_input, test_label):
