@@ -16,6 +16,8 @@ The aim of this project is to design and implement a mini deep learning framewor
 ### Environment
 The project has been developed and test with `python3.8.3`.
 
-Required libraries: `Pytorch`, `matplotlib`, `mlxtend`.
+Required libraries: `Pytorch`.
+
+To plot: `matplotlib`, `mlxtend`.
 
 * * *
