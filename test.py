@@ -67,7 +67,7 @@ def main():
         for batch_size in batch_sizes:
             print("\n")
             print("#"*60)
-            print("loss used:", loss, " batch size:", batch_size)
+            print("Loss: ", loss, ", Batch Size: ", batch_size)
 
             (train_error_mean, test_error_mean,
                 train_error_std, test_error_std) = run_experiment(loss, batch_size, num_experiments, nb_epochs)

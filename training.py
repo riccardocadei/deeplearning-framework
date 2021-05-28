@@ -5,7 +5,7 @@ from optimizer import *
 from plotter import *
 
 
-def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False):
+def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False, verbose=False):
     """
     Trains the model using the data provided as training set
     """
@@ -50,7 +50,7 @@ def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_
                 loss = loss_function(output, val_target[i])
                 epoch_val_loss += loss.loss.item()
             val_losses.append(epoch_val_loss/val_dim)
-            print('Epoch {}/{}, Train_Loss: {:.4f}, Val_Loss: {:.4f}'.format(epoch, nb_epochs, epoch_loss/num_batches, 
+            if verbose: print('Epoch {}/{}, Train_Loss: {:.4f}, Val_Loss: {:.4f}'.format(epoch, nb_epochs, epoch_loss/num_batches, 
                                                                         epoch_val_loss/val_dim))
 
 
