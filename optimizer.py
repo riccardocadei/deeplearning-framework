@@ -7,7 +7,7 @@ class Optimizer(object):
 
 class SGD(Optimizer):
     '''
-    Batch Gradient Descent
+    Implements stochastic gradient descent 
     '''
     def __init__(self, params, lr):
         super(SGD).__init__()
@@ -16,9 +16,8 @@ class SGD(Optimizer):
         self.lr = lr
     
     def step(self):
-        """
-        Batch Gradient Descent step: 
-        w = w - eta * [1/n*sum([dL/dw])]
+        """ 
+        w = w - eta * dL/dw
         """
         for (weight, grad) in self.params:
             weight.sub_(self.lr * grad)
