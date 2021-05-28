@@ -7,7 +7,7 @@ class Optimizer(object):
 
 class SGD(Optimizer):
     '''
-    Implements stochastic gradient descent 
+    Gradient Descent (for an individual or batch of examples)
     '''
     def __init__(self, params, lr):
         super(SGD).__init__()
