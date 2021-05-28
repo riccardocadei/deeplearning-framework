@@ -5,12 +5,12 @@ class Optimizer(object):
         raise NotImplementedError
             
 
-class BGD(Optimizer):
+class SGD(Optimizer):
     '''
     Batch Gradient Descent
     '''
     def __init__(self, params, lr):
-        super(BGD).__init__()
+        super(SGD).__init__()
 
         self.params = params
         self.lr = lr

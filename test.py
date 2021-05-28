@@ -49,7 +49,7 @@ def run_experiment(loss_func:str, batch_size, num_experiments, nb_epochs=300):
 
 
 def main():
-    num_experiments = 10
+    num_experiments = 1
     losses = ["MSE", "MAE", "CrossEntropy"]
     batch_sizes = [50]
     

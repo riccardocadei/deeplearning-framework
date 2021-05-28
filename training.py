@@ -5,14 +5,14 @@ from optimizer import *
 from plotter import *
 
 
-def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False, verbose=False):
+def train(model, loss_function, train_input, train_target, nb_epochs, lr, batch_size=1, show_plot=False, verbose=True):
     """
     Trains the model using the data provided as training set
     """
     n = train_input.size(0)
     
     # Batch Gradient Descent
-    optimizer = BGD(model.param(), lr)
+    optimizer = SGD(model.param(), lr)
 
     
     losses = []
