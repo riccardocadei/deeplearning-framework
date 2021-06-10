@@ -1,9 +1,9 @@
-# EE-559 Project1
+# Mini Deep Learning Framework
 
-The repository contains the code for Project 2 of [Deep Learning (EE-559)](https://edu.epfl.ch/coursebook/en/deep-learning-EE-559) course at [EPFL](https://www.epfl.ch/en/) during Spring term 2021. 
+This repository contains the code for Project 2 of [Deep Learning (EE-559)](https://edu.epfl.ch/coursebook/en/deep-learning-EE-559) course at [EPFL](https://www.epfl.ch/en/) during Spring term 2021. 
 
 ### Team
-The project is accomplished by:
+This project is accomplished by:
 - Riccardo Cadei: [@riccardocadei](https://github.com/riccardocadei)
 - Riccardo Fradiani: [@riccardofradiani](https://github.com/riccardofradiani)
 - Niccolò Polvani: [@nickpolvani](https://github.com/nickpolvani)
